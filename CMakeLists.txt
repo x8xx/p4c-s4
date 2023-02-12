@@ -2,7 +2,8 @@ message(STATUS "Start configuring S4 back end")
 
 set(P4C_S4_SOURCES
     main.cpp
-    )
+    ../../backends/bmv2/psa_switch/midend.cpp
+)
 
 add_executable(p4c-s4 ${P4C_S4_SOURCES})
 target_link_libraries (p4c-s4 ${P4C_LIBRARIES} ${P4C_LIB_DEPS})
