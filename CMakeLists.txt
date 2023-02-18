@@ -5,6 +5,9 @@ set(P4C_S4_SOURCES
     ../../backends/bmv2/psa_switch/midend.cpp
 )
 
+set(S4_DIST_HEADERS p4include/s4.p4)
+
+
 add_executable(p4c-s4 ${P4C_S4_SOURCES})
 target_link_libraries (p4c-s4 ${P4C_LIBRARIES} ${P4C_LIB_DEPS})
 add_dependencies(p4c-s4 genIR)
@@ -18,5 +21,8 @@ install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/driver/p4c.s4.cfg
 
 add_custom_target(s4linkbinary
   COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_CURRENT_BINARY_DIR}/p4c-s4 ${P4C_BINARY_DIR}/p4c-s4
+  COMMAND ${CMAKE_COMMAND} -E make_directory ${P4C_BINARY_DIR}/p4include &&
+          ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/${S4_DIST_HEADERS} ${P4C_BINARY_DIR}/p4include
+  COMMAND ${CMAKE_COMMAND} -E create_symlink ${P4C_BINARY_DIR}/p4include ${CMAKE_CURRENT_BINARY_DIR}/p4include
 )
 add_dependencies(p4c_driver s4linkbinary)

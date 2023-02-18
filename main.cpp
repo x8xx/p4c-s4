@@ -24,7 +24,7 @@ class S4Options : public CompilerOptions {
 using S4Context = P4CContextWithOptions<S4Options>;
 
 
-int compile(CompilerOptions options) {
+int compile(CompilerOptions& options) {
     /*
      * Parser
      */
@@ -64,7 +64,6 @@ int compile(CompilerOptions options) {
 
 
 int main(int argc, char *const argv[]) {
-    std::cout << "heloworld" << std::endl;
     setup_gc_logging();
 
     /*
@@ -75,10 +74,13 @@ int main(int argc, char *const argv[]) {
     options.langVersion = CompilerOptions::FrontendVersion::P4_16;
     options.compilerVersion = "0.0.1";
 
-    if (options.process(argc, argv) != nullptr)
+    if (options.process(argc, argv) != nullptr) {
         options.setInputFile();
-    if (::errorCount() > 0)
+    }
+
+    if (::errorCount() > 0) {
         return 1;
+    }
 
 
     return compile(options);
