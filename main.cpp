@@ -1,6 +1,7 @@
 #include <fstream>
 #include <iostream>
 
+#include "options.h"
 #include "ir/ir.h"
 #include "frontends/common/options.h"
 #include "frontends/common/parseInput.h"
@@ -11,20 +12,11 @@
 #include "lib/nullstream.h"
 
 
-class S4Options : public CompilerOptions {
- public:
-    cstring outputFile = nullptr;
-    S4Options() {
-      registerOption("-o", "outfile",
-              [this](const char* arg) { this->outputFile = arg; return true; },
-              "Write output to outfile");
-     }
-};
-
-using S4Context = P4CContextWithOptions<S4Options>;
 
 
 int compile(CompilerOptions& options) {
+    auto hook = options.getDebugHook();
+
     /*
      * Parser
      */
@@ -39,6 +31,7 @@ int compile(CompilerOptions& options) {
      * FrontEnd
      */
     P4::FrontEnd frontend;
+    frontend.addDebugHook(hook);
     program = frontend.run(options, program);
     if (::errorCount() > 0) {
         return 1;
@@ -48,8 +41,9 @@ int compile(CompilerOptions& options) {
     /*
      * MidEnd
      */
-    BMV2::PsaSwitchMidEnd midend(options);
-    auto toplevel = midend.process(program);
+    BMV2::PsaSwitchMidEnd midEnd(options);
+    midEnd.addDebugHook(hook);
+    auto toplevel = midEnd.process(program);
     if (::errorCount() > 0) {
         return 1;
     }
@@ -69,8 +63,8 @@ int main(int argc, char *const argv[]) {
     /*
      * Option
      */
-    AutoCompileContext autoS4Context(new S4Context);
-    auto& options = S4Context::get().options();
+    AutoCompileContext autoS4Context(new S4::S4Context);
+    auto& options = S4::S4Context::get().options();
     options.langVersion = CompilerOptions::FrontendVersion::P4_16;
     options.compilerVersion = "0.0.1";
 
