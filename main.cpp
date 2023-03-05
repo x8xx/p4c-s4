@@ -2,9 +2,11 @@
 #include <iostream>
 
 #include "options.h"
+#include "backends/bmv2/psa_switch/options.h"
 #include "ir/ir.h"
 #include "frontends/common/options.h"
 #include "frontends/common/parseInput.h"
+#include "frontends/common/applyOptionsPragmas.h"
 #include "frontends/p4/frontend.h"
 #include "backends/bmv2/psa_switch/midend.h"
 #include "lib/error.h"
@@ -14,22 +16,26 @@
 
 
 
-int compile(CompilerOptions& options) {
+int p4Compile(CompilerOptions& options) {
     auto hook = options.getDebugHook();
+
 
     /*
      * Parser
      */
     auto program = P4::parseP4File(options);
-
     if (program == nullptr || ::errorCount() > 0) {
         std::cerr << "Can't parse P4 file " << options.file << std::endl;
         return 1;
     }
 
+
     /*
      * FrontEnd
      */
+    P4::P4COptionPragmaParser optionsPragmaParser;
+    program->apply(P4::ApplyOptionsPragmas(optionsPragmaParser));
+
     P4::FrontEnd frontend;
     frontend.addDebugHook(hook);
     program = frontend.run(options, program);
@@ -64,7 +70,9 @@ int main(int argc, char *const argv[]) {
      * Option
      */
     AutoCompileContext autoS4Context(new S4::S4Context);
-    auto& options = S4::S4Context::get().options();
+    AutoCompileContext autoPsaSwitchContext(new BMV2::PsaSwitchContext);
+
+    auto& options = BMV2::PsaSwitchContext::get().options();
     options.langVersion = CompilerOptions::FrontendVersion::P4_16;
     options.compilerVersion = "0.0.1";
 
@@ -77,5 +85,5 @@ int main(int argc, char *const argv[]) {
     }
 
 
-    return compile(options);
+    return p4Compile(options);
 }

@@ -2,11 +2,12 @@
 #define BACKENDS_S4_SWITCH_OPTIONS_H_
 
 
-#include "backends/bmv2/psa_switch/options.h"
+/* #include "backends/bmv2/psa_switch/options.h" */
+#include "frontends/common/options.h"
 
 namespace S4 {
 
-class S4Options : public BMV2::PsaSwitchOptions {
+class S4Options : public CompilerOptions {
  public:
     cstring outputFile = nullptr;
     S4Options() {
