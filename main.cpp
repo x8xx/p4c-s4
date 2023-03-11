@@ -12,6 +12,7 @@
 #include "lib/error.h"
 #include "lib/gc.h"
 #include "lib/nullstream.h"
+#include "wasmc/wasmc.h"
 
 
 
@@ -54,6 +55,8 @@ int p4Compile(CompilerOptions& options) {
         return 1;
     }
 
+    std::cout << "name: " <<  toplevel->getName() << std::endl;
+    std::cout << add(2, 3) << std::endl;
 
     /*
      * BackEnd
@@ -83,7 +86,6 @@ int main(int argc, char *const argv[]) {
     if (::errorCount() > 0) {
         return 1;
     }
-
 
     return p4Compile(options);
 }
