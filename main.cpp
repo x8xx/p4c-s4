@@ -15,6 +15,9 @@
 #include "wasmc/wasmc.h"
 
 
+int wasmCompile() {
+    return 0;
+}
 
 
 int p4Compile(CompilerOptions& options) {
@@ -56,7 +59,6 @@ int p4Compile(CompilerOptions& options) {
     }
 
     std::cout << "name: " <<  toplevel->getName() << std::endl;
-    std::cout << add(2, 3) << std::endl;
 
     /*
      * BackEnd
@@ -70,22 +72,45 @@ int main(int argc, char *const argv[]) {
     setup_gc_logging();
 
     /*
-     * Option
+     * S4 Option
      */
-    AutoCompileContext autoS4Context(new S4::S4Context);
-    AutoCompileContext autoPsaSwitchContext(new BMV2::PsaSwitchContext);
-
-    auto& options = BMV2::PsaSwitchContext::get().options();
-    options.langVersion = CompilerOptions::FrontendVersion::P4_16;
-    options.compilerVersion = "0.0.1";
-
-    if (options.process(argc, argv) != nullptr) {
-        options.setInputFile();
+    S4::S4Context s4Context;
+    auto& s4Options = s4Context.options();
+    s4Options.langVersion = CompilerOptions::FrontendVersion::P4_16;
+    s4Options.compilerVersion = "0.0.1";
+    if (s4Options.process(argc, argv) != nullptr) {
+        s4Options.setInputFile();
     }
+
+    if (s4Options.wasm != nullptr) {
+        std::cout << s4Options.wasm << std::endl;
+    } else {
+        std::cout << "null desu..." << std::endl;
+    }
+
+    wasmCompile();
+
+
+
+    /*
+     * PSA Option
+     */
+    AutoCompileContext autoPsaSwitchContext(new BMV2::PsaSwitchContext);
+    auto& psaOptions = BMV2::PsaSwitchContext::get().options();
+    psaOptions = dynamic_cast<BMV2::PsaSwitchOptions&>(s4Options);
 
     if (::errorCount() > 0) {
         return 1;
     }
 
-    return p4Compile(options);
+    
+    int res = p4Compile(psaOptions);
+    if (res > 0) {
+        return res;
+    }
+
+
+    // link...
+
+    return 0;
 }
