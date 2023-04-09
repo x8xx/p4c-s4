@@ -2,12 +2,14 @@ message(STATUS "Start configuring S4 back end")
 
 
 set(P4C_S4_SOURCES
-    main.cpp
+    s4.cpp
+    wasm.cpp
     ../../backends/bmv2/psa_switch/midend.cpp
     ../../backends/bmv2/psa_switch/options.cpp
 )
 
 set(P4C_S4_HEADERS
+    wasm.h
     options.h
 )
 

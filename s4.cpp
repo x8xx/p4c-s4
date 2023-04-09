@@ -1,7 +1,6 @@
 #include <fstream>
 #include <iostream>
 
-#include "options.h"
 #include "backends/bmv2/psa_switch/options.h"
 #include "ir/ir.h"
 #include "frontends/common/options.h"
@@ -12,12 +11,10 @@
 #include "lib/error.h"
 #include "lib/gc.h"
 #include "lib/nullstream.h"
-#include "wasmc/wasmc.h"
+/* #include "wasmc/wasmc.h" */
 
-
-int wasmCompile() {
-    return 0;
-}
+#include "options.h"
+#include "wasm.h"
 
 
 int p4Compile(CompilerOptions& options) {
@@ -37,8 +34,8 @@ int p4Compile(CompilerOptions& options) {
     /*
      * FrontEnd
      */
-    P4::P4COptionPragmaParser optionsPragmaParser;
-    program->apply(P4::ApplyOptionsPragmas(optionsPragmaParser));
+    P4::P4COptionPragmaParser options_pragma_parser;
+    program->apply(P4::ApplyOptionsPragmas(options_pragma_parser));
 
     P4::FrontEnd frontend;
     frontend.addDebugHook(hook);
@@ -51,9 +48,9 @@ int p4Compile(CompilerOptions& options) {
     /*
      * MidEnd
      */
-    BMV2::PsaSwitchMidEnd midEnd(options);
-    midEnd.addDebugHook(hook);
-    auto toplevel = midEnd.process(program);
+    BMV2::PsaSwitchMidEnd midend(options);
+    midend.addDebugHook(hook);
+    auto toplevel = midend.process(program);
     if (::errorCount() > 0) {
         return 1;
     }
@@ -82,14 +79,11 @@ int main(int argc, char *const argv[]) {
         s4Options.setInputFile();
     }
 
-    if (s4Options.wasm != nullptr) {
-        std::cout << s4Options.wasm << std::endl;
-    } else {
-        std::cout << "null desu..." << std::endl;
+    if (s4Options.wasmPaths.size() > 0) {
+        for (auto wasmPath : s4Options.wasmPaths) {
+            S4::wasmCompile(wasmPath);
+        }
     }
-
-    wasmCompile();
-
 
 
     /*

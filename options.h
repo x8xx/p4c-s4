@@ -3,17 +3,16 @@
 
 
 #include "backends/bmv2/psa_switch/options.h"
-/* #include "frontends/common/options.h" */
 
 namespace S4 {
 
-/* class S4Options : public CompilerOptions { */
 class S4Options : public BMV2::PsaSwitchOptions {
  public:
-    cstring wasm = nullptr;
+    std::vector<const char*> wasmPaths;
+
     S4Options() {
       registerOption("-w", "webassembly",
-              [this](const char* arg) { this->wasm = arg; return true; },
+              [this](const char* arg) { this->wasmPaths.push_back(arg); return true; },
               "Input WebAssemlby(.wasm)");
      }
 };
