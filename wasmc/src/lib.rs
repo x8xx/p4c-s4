@@ -1,6 +1,7 @@
 mod wasmer;
 
 use std::ptr::null;
+use std::slice::from_raw_parts;
 
 #[repr(C)]
 pub struct NativeObjectFromWasm {
@@ -23,6 +24,8 @@ pub extern "C" fn wasm_to_native_object(wasm: *const u8, wasm_size: usize) -> Na
             };
         }
     }
+
+    let native_object = wasmer::gen_native_object(unsafe { from_raw_parts(wasm, wasm_size) });
     
     NativeObjectFromWasm {
         obj: wasm,
