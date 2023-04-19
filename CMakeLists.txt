@@ -4,6 +4,7 @@ message(STATUS "Start configuring S4 back end")
 set(P4C_S4_SOURCES
     s4.cpp
     wasm.cpp
+    backend.cpp
     ../../backends/bmv2/psa_switch/midend.cpp
     ../../backends/bmv2/psa_switch/options.cpp
 )
@@ -11,6 +12,7 @@ set(P4C_S4_SOURCES
 set(P4C_S4_HEADERS
     wasm.h
     options.h
+    backend.h
 )
 
 set(S4_DIST_HEADERS p4include/s4.p4)
@@ -18,10 +20,19 @@ set(S4_DIST_HEADERS p4include/s4.p4)
 add_cpplint_FILES(${CMAKE_CURRENT_SOURCE_DIR} "${P4C_S4_SOURCES};${P4C_S4_HEADERS}")
 
 
+# LLVM
+find_package(LLVM REQUIRED CONFIG)
+include_directories(${LLVM_INCLUDE_DIRS})
+add_definitions(${LLVM_DEFINITIONS})
+llvm_map_components_to_libnames(LLVM_LIBS support core irreader)
+
+
 add_executable(p4c-s4 ${P4C_S4_SOURCES})
 target_link_libraries (p4c-s4 ${P4C_LIBRARIES} ${P4C_LIB_DEPS})
 target_link_libraries (p4c-s4 ${CMAKE_CURRENT_SOURCE_DIR}/wasmc/target/release/libwasmc.so)
+target_link_libraries (p4c-s4  ${LLVM_LIBS})
 add_dependencies(p4c-s4 genIR)
+# wasmc
 add_dependencies(p4c-s4 wasmc)
 add_custom_target(
     wasmc

@@ -14,6 +14,7 @@
 /* #include "wasmc/wasmc.h" */
 
 #include "options.h"
+#include "backend.h"
 #include "wasm.h"
 
 
@@ -55,11 +56,12 @@ int p4Compile(CompilerOptions& options) {
         return 1;
     }
 
-    std::cout << "name: " <<  toplevel->getName() << std::endl;
 
     /*
      * BackEnd
      */
+    S4::Backend backend;
+    backend.process(toplevel);
 
     return 0;
 }
@@ -84,7 +86,6 @@ int main(int argc, char *const argv[]) {
             S4::wasmCompile(wasmPath);
         }
     }
-
 
     /*
      * PSA Option
