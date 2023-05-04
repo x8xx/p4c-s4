@@ -7,6 +7,8 @@ set(P4C_S4_SOURCES
     backend.cpp
     ../../backends/bmv2/psa_switch/midend.cpp
     ../../backends/bmv2/psa_switch/options.cpp
+    ../../backends/bmv2/psa_switch/psaProgramStructure.cpp
+    ../../backends/bmv2/common/programStructure.cpp
 )
 
 set(P4C_S4_HEADERS

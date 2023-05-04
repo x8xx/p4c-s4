@@ -18,7 +18,7 @@
 #include "wasm.h"
 
 
-int p4Compile(CompilerOptions& options) {
+int p4Compile(BMV2::BMV2Options &options) {
     auto hook = options.getDebugHook();
 
 
@@ -60,7 +60,8 @@ int p4Compile(CompilerOptions& options) {
     /*
      * BackEnd
      */
-    S4::Backend backend;
+    /* S4::Backend backend(&options, &midend.refMap, &midend.typeMap, &midend.enumMap); */
+    S4::Backend backend(options, &midend.refMap, &midend.typeMap, &midend.enumMap);
     backend.process(toplevel);
 
     return 0;
