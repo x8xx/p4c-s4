@@ -1,10 +1,11 @@
 #include "frontends/p4/typeMap.h"
 #include "ir/ir.h"
-#include "native_object.h"
+#include "../native_object.h"
 #include "backends/bmv2/psa_switch/options.h"
 /* #include "backends/bmv2/psa_switch/psaSwitch.h" */
 #include "backends/bmv2/psa_switch/psaProgramStructure.h"
 #include "backends/bmv2/common/programStructure.h"
+#include "frontends/p4/evaluator/evaluator.h"
 
 #include <llvm/IR/Module.h>
 #include <llvm/IR/LLVMContext.h>

@@ -14,7 +14,7 @@
 /* #include "wasmc/wasmc.h" */
 
 #include "options.h"
-#include "backend.h"
+#include "p4_backend/backend.h"
 #include "wasm.h"
 
 
